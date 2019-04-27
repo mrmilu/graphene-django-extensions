@@ -52,7 +52,7 @@ def pytest_configure(config):
         ),
         GRAPHENE={
             'SCHEMA': 'tests.graphql.schema.schema',
-        }
+        },
     )
 
     django.setup()

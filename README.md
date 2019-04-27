@@ -16,4 +16,11 @@ cd docker/graphene_django_helpers
 docker-compose run app
 ```
 
+Command to run a bash console tu run pytest manually
+```bash
+cd docker/graphene_django_helpers
+docker-compose run --rm --service-ports app bash
+```
+
+
 ###### Sponsored by https://mrmilu.com

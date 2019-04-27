@@ -128,6 +128,7 @@ class ArgumentTests(TestCase):
         '''
         response = self.run_gql(query)
         self.assertEqual(response.status_code, 200)
+        # self.print_json(response.json())
 
     def test_text_filter_simple(self):
         query = '''
@@ -178,6 +179,31 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 3'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+    def test_text_filter_relation(self):
+        query = '''
+        {{
+            allBlogPosts(blog_Name: "{0}") {{
+                edges {{
+                    cursor
+                    node {{
+                        name
+                    }}
+                }}
+            }}
+        }}
+        '''
+        response = self.run_gql(query.format('Blog 1'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+
+        response = self.run_gql(query.format('Blog 2'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+
+        response = self.run_gql(query.format('Blog 3'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogPosts']['edges']), 0)
 
     def test_text_filter_relation_with_field_name_and_path(self):
         query = '''
