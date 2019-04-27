@@ -11,8 +11,10 @@ class FieldWithArgumentsMixin(object):
 
     def __init__(self, *args, **kwargs):
         self.argument_map = self.build_argument_map()
-        for key, instance in self.argument_map.items():
-            kwargs.setdefault(key, instance.of_type)
+        for key, argument in self.argument_map.items():
+            # @TODO - We should change how we set the arguments as long as name, type and description are kwargs of
+            # @TODO - graphene.Field. We should find another way to define arguments
+            kwargs.setdefault(key, argument['instance'].of_type)
         super().__init__(*args, **kwargs)
 
     def build_argument_map(self):
@@ -26,23 +28,23 @@ class FieldWithArgumentsMixin(object):
 
     def get_argument_instances(self, **args):
         for key in args:
-            argument_instance = self.argument_map.get(key, None)
-            if argument_instance:
-                yield key, argument_instance
+            argument = self.argument_map.get(key, None)
+            if argument:
+                yield key, argument['instance'], argument['params']
 
     def alter_queryset_before(self, queryset, info, **args):
-        for key, argument_instance in self.get_argument_instances(**args):
-            queryset = argument_instance.alter_queryset_before(queryset, key, args[key], info)
+        for key, instance, params in self.get_argument_instances(**args):
+            queryset = instance.alter_queryset_before(queryset, params, args[key], info)
         return queryset
 
     def alter_queryset_after(self, queryset, info, **args):
-        for key, argument_instance in self.get_argument_instances(**args):
-            queryset = argument_instance.alter_queryset_before(queryset, key, args[key], info)
+        for key, instance, params in self.get_argument_instances(**args):
+            queryset = instance.alter_queryset_before(queryset, params, args[key], info)
         return queryset
 
     def alter_filter_conditions(self, conditions, info, **args):
-        for key, argument_instance in self.get_argument_instances(**args):
-            conditions = argument_instance.alter_filter_conditions(conditions, key, args[key], info)
+        for key, instance, params in self.get_argument_instances(**args):
+            conditions = instance.alter_filter_conditions(conditions, params, args[key], info)
         return conditions
 
     @classmethod

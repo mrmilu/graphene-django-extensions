@@ -7,13 +7,13 @@ from tests.models import Blog, BlogPost
 
 class ArgumentTests(TestCase):
     def setUp(self):
-        self.blog1 = Blog.objects.create(name='Blog 1', description='Description 1')
-        self.blog2 = Blog.objects.create(name='Blog 2', description='Description 2')
+        self.blog1 = Blog.objects.create(title='Blog 1', description='Description 1')
+        self.blog2 = Blog.objects.create(title='Blog 2', description='Description 2')
 
-        self.blog1_post1 = BlogPost.objects.create(name='Blog 1 - Post 1', body='Body 1 - 1', blog=self.blog1)
-        self.blog1_post2 = BlogPost.objects.create(name='Blog 1 - Post 2', body='Body 1 - 2', blog=self.blog1)
-        self.blog2_post1 = BlogPost.objects.create(name='Blog 2 - Post 1', body='Body 2 - 1', blog=self.blog2)
-        self.blog2_post2 = BlogPost.objects.create(name='Blog 2 - Post 2', body='Body 2 - 2', blog=self.blog2)
+        self.blog1_post1 = BlogPost.objects.create(title='Blog 1 - Post 1', body='Body 1 - 1', blog=self.blog1)
+        self.blog1_post2 = BlogPost.objects.create(title='Blog 1 - Post 2', body='Body 1 - 2', blog=self.blog1)
+        self.blog2_post1 = BlogPost.objects.create(title='Blog 2 - Post 1', body='Body 2 - 1', blog=self.blog2)
+        self.blog2_post2 = BlogPost.objects.create(title='Blog 2 - Post 2', body='Body 2 - 2', blog=self.blog2)
 
     def run_gql(self, query, variables=None):
         data = {
@@ -133,11 +133,11 @@ class ArgumentTests(TestCase):
     def test_text_filter_simple(self):
         query = '''
         {{
-            allBlogs(name: "{0}") {{
+            allBlogs(title: "{0}") {{
                 edges {{
                     cursor
                     node {{
-                        name
+                        title
                     }}
                 }}
             }}
@@ -155,14 +155,14 @@ class ArgumentTests(TestCase):
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
 
-    def test_text_filter_with_field_name(self):
+    def test_text_filter_with_field_title(self):
         query = '''
         {{
-            allBlogs(nameFilterWithFieldName: "{0}") {{
+            allBlogs(titleFilterWithFieldName: "{0}") {{
                 edges {{
                     cursor
                     node {{
-                        name
+                        title
                     }}
                 }}
             }}
@@ -177,17 +177,74 @@ class ArgumentTests(TestCase):
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
 
         response = self.run_gql(query.format('Blog 3'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+    def test_text_filter_when_exact_is_always_the_first(self):
+        query = '''
+        {{
+            allBlogs(filterByDescription: "{0}") {{
+                edges {{
+                    cursor
+                    node {{
+                        title
+                    }}
+                }}
+            }}
+        }}
+        '''
+        response = self.run_gql(query.format('Description 1'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+
+        response = self.run_gql(query.format('description 1'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+        response = self.run_gql(query.format('Description 2'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+
+        response = self.run_gql(query.format('description 2'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+        response = self.run_gql(query.format('Description 3'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+        query = '''
+        {{
+            allBlogs(filterByDescription_Iexact: "{0}") {{
+                edges {{
+                    cursor
+                    node {{
+                        title
+                    }}
+                }}
+            }}
+        }}
+        '''
+        response = self.run_gql(query.format('description 1'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+
+        response = self.run_gql(query.format('DESCRiption 2'))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+
+        response = self.run_gql(query.format('description 3'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
 
     def test_text_filter_relation(self):
         query = '''
         {{
-            allBlogPosts(blog_Name: "{0}") {{
+            allBlogPosts(blog_Title: "{0}") {{
                 edges {{
                     cursor
                     node {{
-                        name
+                        title
                     }}
                 }}
             }}
@@ -205,14 +262,14 @@ class ArgumentTests(TestCase):
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 0)
 
-    def test_text_filter_relation_with_field_name_and_path(self):
+    def test_text_filter_relation_with_field_title_and_path(self):
         query = '''
         {{
-            allBlogPosts(blogNameFilterWithFieldNameAndPath: "{0}") {{
+            allBlogPosts(blogTitleFilterWithFieldNameAndPath: "{0}") {{
                 edges {{
                     cursor
                     node {{
-                        name
+                        title
                     }}
                 }}
             }}
@@ -230,14 +287,14 @@ class ArgumentTests(TestCase):
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 0)
 
-    def test_text_filter_relation_with_field_name(self):
+    def test_text_filter_relation_with_field_title(self):
         query = '''
         {{
-            allBlogPosts(blogNameFilterWithFieldName: "{0}") {{
+            allBlogPosts(blogTitleFilterWithFieldName: "{0}") {{
                 edges {{
                     cursor
                     node {{
-                        name
+                        title
                     }}
                 }}
             }}

@@ -14,11 +14,11 @@ class TestModel(models.Model):
 
 
 class Blog(TestModel):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     description = models.TextField(null=True)
 
 
 class BlogPost(TestModel):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     body = models.TextField(null=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts')

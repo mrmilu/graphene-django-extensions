@@ -1,20 +1,20 @@
-from graphene_django_helpers import fields
-
-from graphene_django_helpers import arguments
+from graphene_django_helpers import fields, arguments
 
 
 class BlogField(fields.ConnectionFieldWithArguments):
+    # @TODO - Be careful, name, description and type are protected names
+    #  as long as we pass them as kwargs to graphene.Field
     arguments = [
-        arguments.Filter('name'),
-        arguments.Filter('name_filter_with_field_name', field_name='name'),
+        arguments.Filter('title'),
+        arguments.Filter('title_filter_with_field_name', field_name='title'),
+        arguments.Filter('filter_by_description', field_name='description', lookups=['iexact', 'exact']),
     ]
 
 
 class BlogPostField(fields.ConnectionFieldWithArguments):
     arguments = [
-        arguments.Filter('name'),
-        arguments.Filter('blog__name'),
-        arguments.Filter('blog_name_filter_with_field_name', field_name='blog__name'),
-        arguments.Filter('blog_name_filter_with_field_name_and_path', field_name='name', path='blog'),
-        # arguments.Filter('name', lookups=['exact']),
+        arguments.Filter('title'),
+        arguments.Filter('blog__title'),
+        arguments.Filter('blog_title_filter_with_field_name', field_name='blog__title'),
+        arguments.Filter('blog_title_filter_with_field_name_and_path', field_name='title', path='blog'),
     ]

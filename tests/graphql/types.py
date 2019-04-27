@@ -9,7 +9,7 @@ class BlogType(DjangoObjectType):
         model = Blog
         interfaces = [graphene.Node]
         only_fields = (
-            'name',
+            'title',
             'description',
             'posts',
         )
@@ -20,7 +20,7 @@ class BlogPostType(DjangoObjectType):
         model = BlogPost
         interfaces = [graphene.Node]
         only_fields = (
-            'name',
+            'title',
             'body',
             'blog',
         )
