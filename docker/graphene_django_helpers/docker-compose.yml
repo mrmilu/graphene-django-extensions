@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  app:
+    image: graphene_django_helpers/tests
+    build:
+      context: ../../
+      dockerfile: docker/Dockerfile
+    command: pytest
+    volumes:
+      - ../..:/src
