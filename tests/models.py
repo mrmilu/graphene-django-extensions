@@ -16,6 +16,7 @@ class TestModel(models.Model):
 class Blog(TestModel):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True)
+    enabled = models.BooleanField(default=True)
 
 
 class BlogPost(TestModel):

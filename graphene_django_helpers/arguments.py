@@ -12,17 +12,14 @@ class Argument(object):
         self.name = name or self.name
         self.of_type = of_type or self.of_type
 
-    def alter_queryset_before(self, queryset, params, value, info):
+    def alter_queryset_before(self, field, queryset, params, value, info):
         return queryset
 
-    def alter_queryset_after(self, queryset, params, value, info):
+    def alter_queryset_after(self, field, queryset, params, value, info):
         return queryset
 
-    def alter_filter_conditions(self, conditions, params, value, info):
+    def alter_filter_conditions(self, field, conditions, params, value, info):
         return conditions
-
-    def get_value(self, params, value, info):
-        return value
 
     def get_mapping(self):
         d = {}
@@ -40,13 +37,14 @@ class Filter(Argument):
     path = None
     lookups = None
 
-    def __init__(self, name, field_name=None, lookups=None, path=None, of_type=None) -> None:
+    def __init__(self, name, field_name=None, lookups=None, path=None, of_type=None, method=None) -> None:
         super().__init__(name, of_type=of_type)
         self.field_name = field_name or self.field_name
         self.path = path or self.path
         self.lookups = lookups or self.lookups
+        self.method = method
 
-    def get_field_lookup(self, params, value, info):
+    def get_field_lookup(self, field, params, value, info):
         ret = self.field_name or params['name']
         if self.path:
             ret = '{}__{}'.format(self.path, ret)
@@ -55,8 +53,13 @@ class Filter(Argument):
             ret = '{}__{}'.format(ret, lookup)
         return ret
 
-    def alter_filter_conditions(self, conditions, params, value, info):
-        field_lookup = self.get_field_lookup(params, value, info)
+    def alter_filter_conditions(self, field, conditions, params, value, info):
+        # This step does not run if method is provided
+        if self.method:
+            return conditions
+
+
+        field_lookup = self.get_field_lookup(field, params, value, info)
         condition = {}
         condition[field_lookup] = value
         q = Q(**condition)
@@ -73,6 +76,11 @@ class Filter(Argument):
         if exact_lookup_found:
             lookups.remove('exact')
         return exact_lookup_found, lookups
+
+    def alter_queryset_after(self, field, queryset, params, value, info):
+        if self.method:
+            queryset = getattr(field, self.method)(queryset, params, value, info)
+        return queryset
 
     def get_mapping(self):
         d = {}
@@ -99,3 +107,15 @@ class Filter(Argument):
                 }
 
         return d
+
+
+class IntFilter(Filter):
+    of_type = graphene.Int()
+
+
+class FloatFilter(Filter):
+    of_type = graphene.Float()
+
+
+class BooleanFilter(Filter):
+    of_type = graphene.Boolean()

@@ -34,17 +34,17 @@ class FieldWithArgumentsMixin(object):
 
     def alter_queryset_before(self, queryset, info, **args):
         for key, instance, params in self.get_argument_instances(**args):
-            queryset = instance.alter_queryset_before(queryset, params, args[key], info)
+            queryset = instance.alter_queryset_before(self, queryset, params, args[key], info)
         return queryset
 
     def alter_queryset_after(self, queryset, info, **args):
         for key, instance, params in self.get_argument_instances(**args):
-            queryset = instance.alter_queryset_before(queryset, params, args[key], info)
+            queryset = instance.alter_queryset_after(self, queryset, params, args[key], info)
         return queryset
 
     def alter_filter_conditions(self, conditions, info, **args):
         for key, instance, params in self.get_argument_instances(**args):
-            conditions = instance.alter_filter_conditions(conditions, params, args[key], info)
+            conditions = instance.alter_filter_conditions(self, conditions, params, args[key], info)
         return conditions
 
     @classmethod
