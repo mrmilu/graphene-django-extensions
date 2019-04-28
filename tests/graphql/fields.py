@@ -2,6 +2,7 @@ import graphene
 from django.db.models import Count
 
 from graphene_django_helpers import fields, arguments
+from tests.graphql.arguments import BlogPostCountFilter
 
 
 class BlogField(fields.ConnectionFieldWithArguments):
@@ -13,6 +14,7 @@ class BlogField(fields.ConnectionFieldWithArguments):
         arguments.Filter('filter_by_description', field_name='description', lookups=['iexact', 'exact']),
         arguments.Filter('enabled', of_type=graphene.Boolean()),
         arguments.IntFilter('count', method='filter_by_count', lookups=['exact', 'gte']),
+        BlogPostCountFilter('filter_by_count', lookups=['exact', 'gte']),
     ]
 
     def filter_by_count(self, queryset, params, value, info):

@@ -389,10 +389,70 @@ class ArgumentTests(TestCase):
         self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
         self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
+    def test_filter_subclass(self):
+        query = '''
+        {{
+            allBlogs(filterByCount: {0}) {{
+                edges {{
+                    node {{
+                        id
+                        title
+                    }}
+                }}
+            }}
+        }}
+        '''
+        response = self.run_gql(query.format(0))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog3.pk))
+
+        response = self.run_gql(query.format(2))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+
     def test_filter_method_and_lookup(self):
         query = '''
         {{
             allBlogs(count_Gte: {0}) {{
+                edges {{
+                    node {{
+                        id
+                        title
+                    }}
+                }}
+            }}
+        }}
+        '''
+        response = self.run_gql(query.format(0))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 3)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][2]['node']['id'], to_global_id('BlogType', self.blog3.pk))
+
+        response = self.run_gql(query.format(1))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+
+        response = self.run_gql(query.format(2))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+
+        response = self.run_gql(query.format(3))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+    def test_filter_subclass_with_lookup(self):
+        query = '''
+        {{
+            allBlogs(filterByCount_Gte: {0}) {{
                 edges {{
                     node {{
                         id

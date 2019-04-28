@@ -58,7 +58,6 @@ class Filter(Argument):
         if self.method:
             return conditions
 
-
         field_lookup = self.get_field_lookup(field, params, value, info)
         condition = {}
         condition[field_lookup] = value
