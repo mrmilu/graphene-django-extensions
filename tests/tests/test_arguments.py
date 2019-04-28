@@ -23,7 +23,7 @@ class ArgumentTests(TestCase):
             'query': query,
         }
         if variables:
-            data['variables'] = variables
+            data['variables'] = json.dumps(variables)
         return self.client.post('/graphql/', data)
 
     def print_json(self, data):
@@ -133,6 +133,29 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query)
         self.assertEqual(response.status_code, 200)
         # self.print_json(response.json())
+
+    def test_int_argument(self):
+        query = '''
+        query ($myArgument: Int) {
+            allBlogs(myArgument: $myArgument) {
+                edges {
+                    node {
+                        id
+                        title
+                    }
+                }
+            }
+        }
+        '''
+        response = self.run_gql(query, {
+            "myArgument": 1,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        response = self.run_gql(query, {
+            "myArgument": 'test',
+        })
+        self.assertEqual(response.status_code, 400)
 
     def test_string_filter_simple(self):
         query = '''
@@ -482,5 +505,49 @@ class ArgumentTests(TestCase):
         self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format(3))
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 0)
+
+    def test_multiple_filters(self):
+        query = '''
+        query ($enabled: Boolean, $title: String) {
+            allBlogs(enabled: $enabled, title: $title) {
+                edges {
+                    node {
+                        id
+                        title
+                    }
+                }
+            }
+        }
+        '''
+        response = self.run_gql(query, {
+            'enabled': False,
+            'title': 'Blog 1',
+        })
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+
+        response = self.run_gql(query, {
+            'enabled': True,
+            'title': 'Blog 2',
+        })
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+
+        response = self.run_gql(query, {
+            'enabled': True,
+            'title': 'Blog 3',
+        })
+        data = response.json()
+        self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog3.pk))
+
+        response = self.run_gql(query, {
+            'enabled': True,
+            'title': 'Blog 1',
+        })
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 0)

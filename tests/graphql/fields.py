@@ -15,6 +15,7 @@ class BlogField(fields.ConnectionFieldWithArguments):
         arguments.Filter('enabled', of_type=graphene.Boolean()),
         arguments.IntFilter('count', method='filter_by_count', lookups=['exact', 'gte']),
         BlogPostCountFilter('filter_by_count', lookups=['exact', 'gte']),
+        arguments.Argument('my_argument', of_type=graphene.Int()),
     ]
 
     def filter_by_count(self, queryset, params, value, info):

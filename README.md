@@ -12,8 +12,8 @@
 ## Testing
 
 ```bash
-cd docker/graphene_django_helpers
-docker-compose run app
+$ cd docker/graphene_django_helpers
+$ docker-compose run app
 ```
 
 Command to run a bash console tu run pytest manually
@@ -27,6 +27,9 @@ $ pytest
 
 # Tests with coverage
 $ pytest --cov=graphene_django_helpers tests/
+$ coverage html
+$ cd htmlcov
+$ python3 -m http.server
 ```
 
 ###### Sponsored by https://mrmilu.com

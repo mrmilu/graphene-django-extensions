@@ -53,6 +53,7 @@ def pytest_configure(config):
         GRAPHENE={
             'SCHEMA': 'tests.graphql.schema.schema',
         },
+        ALLOWED_HOSTS=['*'],
     )
 
     django.setup()
