@@ -2,6 +2,8 @@ import json
 
 from django.test import TestCase
 
+from graphql_relay import to_global_id
+
 from tests.models import Blog, BlogPost
 
 
@@ -137,8 +139,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogs(title: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -148,14 +150,17 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
 
         response = self.run_gql(query.format('Blog 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format('Blog 3'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog3.pk))
 
         response = self.run_gql(query.format('Blog 4'))
         data = response.json()
@@ -166,8 +171,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogs(titleFilterWithFieldName: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -177,10 +182,12 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
 
         response = self.run_gql(query.format('Blog 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format('Blog 4'))
         data = response.json()
@@ -191,8 +198,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogs(filterByDescription: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -202,6 +209,7 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Description 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
 
         response = self.run_gql(query.format('description 1'))
         data = response.json()
@@ -210,6 +218,7 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Description 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format('description 2'))
         data = response.json()
@@ -223,8 +232,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogs(filterByDescription_Iexact: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -234,10 +243,12 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('description 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
 
         response = self.run_gql(query.format('DESCRiption 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format('description 4'))
         data = response.json()
@@ -248,8 +259,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogPosts(blog_Title: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -259,10 +270,14 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog1_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog1_post2.pk))
 
         response = self.run_gql(query.format('Blog 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog2_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog2_post2.pk))
 
         response = self.run_gql(query.format('Blog 3'))
         data = response.json()
@@ -273,8 +288,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogPosts(blogTitleFilterWithFieldNameAndPath: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -284,10 +299,14 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog1_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog1_post2.pk))
 
         response = self.run_gql(query.format('Blog 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog2_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog2_post2.pk))
 
         response = self.run_gql(query.format('Blog 3'))
         data = response.json()
@@ -298,8 +317,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogPosts(blogTitleFilterWithFieldName: "{0}") {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -309,10 +328,14 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('Blog 1'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog1_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog1_post2.pk))
 
         response = self.run_gql(query.format('Blog 2'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogPosts']['edges']), 2)
+        self.assertEqual(data['data']['allBlogPosts']['edges'][0]['node']['id'], to_global_id('BlogPostType', self.blog2_post1.pk))
+        self.assertEqual(data['data']['allBlogPosts']['edges'][1]['node']['id'], to_global_id('BlogPostType', self.blog2_post2.pk))
 
         response = self.run_gql(query.format('Blog 3'))
         data = response.json()
@@ -323,8 +346,8 @@ class ArgumentTests(TestCase):
         {{
             allBlogs(enabled: {0}) {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -334,20 +357,21 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format('true'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
-        # @TODO - Check blog post is blog1
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog3.pk))
 
         response = self.run_gql(query.format('false'))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
-        # @TODO - Check blog post is blog2
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
 
     def test_filter_method(self):
         query = '''
         {{
             allBlogs(count: {0}) {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -357,18 +381,21 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format(0))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 1)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog3.pk))
 
         response = self.run_gql(query.format(2))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
     def test_filter_method_and_lookup(self):
         query = '''
         {{
             allBlogs(count_Gte: {0}) {{
                 edges {{
-                    cursor
                     node {{
+                        id
                         title
                     }}
                 }}
@@ -378,14 +405,21 @@ class ArgumentTests(TestCase):
         response = self.run_gql(query.format(0))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 3)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][2]['node']['id'], to_global_id('BlogType', self.blog3.pk))
 
         response = self.run_gql(query.format(1))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format(2))
         data = response.json()
         self.assertEqual(len(data['data']['allBlogs']['edges']), 2)
+        self.assertEqual(data['data']['allBlogs']['edges'][0]['node']['id'], to_global_id('BlogType', self.blog1.pk))
+        self.assertEqual(data['data']['allBlogs']['edges'][1]['node']['id'], to_global_id('BlogType', self.blog2.pk))
 
         response = self.run_gql(query.format(3))
         data = response.json()
