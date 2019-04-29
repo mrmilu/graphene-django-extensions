@@ -2,10 +2,13 @@
 
 **Helpers for graphene-django**
 
+[![CircleCI](https://circleci.com/gh/mrmilu/graphene-django-helpers.svg?style=svg)](https://circleci.com/gh/mrmilu/graphene-django-helpers)
+[![codecov](https://codecov.io/gh/mrmilu/graphene-django-helpers/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmilu/graphene-django-helpers)
+
 ## Requirements
 
-- Python 2.7, 3.6, 3.7
-- Django 1.11, 2.0, 2.1, 2.2
+- Python 3.4, 3.5, 3.6, 3.7
+- Django 2.0, 2.1, 2.2
 - Graphene 2.1.x
 - Django Graphene 2.2.x
 

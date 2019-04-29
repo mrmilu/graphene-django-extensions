@@ -1,0 +1,93 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2.1
+
+executors:
+  python:
+    parameters:
+      tag:
+        type: string
+        default: latest
+    docker:
+      - image: circleci/python:<< parameters.tag >>
+
+jobs:
+  tests:
+    parameters:
+      python_version:
+        type: string
+        default: latest
+      django_version:
+        type: string
+        default: "2.2"
+    executor:
+      name: python
+      tag: << parameters.python_version >>
+    steps:
+      - checkout
+      - run:
+          name: install django version
+          command: |
+            sudo pip install django==<< parameters.django_version >>
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install -r requirements/tests.txt
+      - run:
+          name: run tests
+          command: |
+            pytest --cov=graphene_django_helpers
+      - run:
+          name: install codecov
+          command: |
+            sudo pip install codecov
+            codecov
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test-results
+      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: test-results
+          destination: tr1
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      # python 3.4
+      - tests:
+          django_version: "2.0"
+          python_version: "3.4"
+
+      # python 3.5
+      - tests:
+          django_version: "2.2"
+          python_version: "3.5"
+      - tests:
+          django_version: "2.1"
+          python_version: "3.5"
+      - tests:
+          django_version: "2.0"
+          python_version: "3.5"
+
+      # python 3.6
+      - tests:
+          django_version: "2.2"
+          python_version: "3.6"
+      - tests:
+          django_version: "2.1"
+          python_version: "3.6"
+      - tests:
+          django_version: "2.0"
+          python_version: "3.6"
+
+      # python 3.7
+      - tests:
+          django_version: "2.2"
+          python_version: "3.7"
+      - tests:
+          django_version: "2.1"
+          python_version: "3.7"
+      - tests:
+          django_version: "2.0"
+          python_version: "3.7"
