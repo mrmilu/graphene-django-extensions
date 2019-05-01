@@ -4,6 +4,9 @@
 
 [![image](https://img.shields.io/circleci/project/github/mrmilu/graphene-django-helpers/master.svg)](https://circleci.com/gh/mrmilu/graphene-django-helpers)
 [![image](https://codecov.io/gh/mrmilu/graphene-django-helpers/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmilu/graphene-django-helpers)
+[![image](https://img.shields.io/github/last-commit/mrmilu/graphene-django-helpers.svg)](https://github.com/mrmilu/graphene-django-helpers)
+[![image](https://img.shields.io/github/contributors/mrmilu/graphene-django-helpers.svg)](https://github.com/mrmilu/graphene-django-helpers/graphs/contributors)
+
 
 ## Requirements
 
