@@ -2,8 +2,8 @@
 
 **Helpers for graphene-django**
 
-[![CircleCI](https://circleci.com/gh/mrmilu/graphene-django-helpers.svg?style=svg)](https://circleci.com/gh/mrmilu/graphene-django-helpers)
-[![codecov](https://codecov.io/gh/mrmilu/graphene-django-helpers/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmilu/graphene-django-helpers)
+[![image](https://img.shields.io/circleci/project/github/mrmilu/graphene-django-helpers/master.svg)](https://circleci.com/gh/mrmilu/graphene-django-helpers)
+[![image](https://codecov.io/gh/mrmilu/graphene-django-helpers/branch/master/graph/badge.svg)](https://codecov.io/gh/mrmilu/graphene-django-helpers)
 
 ## Requirements
 
